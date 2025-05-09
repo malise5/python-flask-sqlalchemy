@@ -8,6 +8,8 @@ requests = "*"
 ipdb = "*"
 alembic = "*"
 sqlalchemy = "*"
+flask = "*"
+flask-migrate = "*"
 
 [dev-packages]
 

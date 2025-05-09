@@ -6,8 +6,9 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
 )
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, backref
 
-import owner
+# import owner
 
 Base = declarative_base()
 
@@ -53,3 +54,17 @@ class Pet(Base):
         # Take the time to review the migration and verify the datbase with SQLite Browser
 
         # Head to debug.py to test out CRUD actions
+
+class Owner(Base):
+    __tablename__ = "owners"
+    __table_args__ = (PrimaryKeyConstraint("id"),)  # Wrap in a tuple
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    email = Column(String)
+    phone = Column(String)
+    address = Column(String)
+    pets = relationship("Pet", backref=backref("pet", lazy="dynamic"))
+
+    def __repr__(self):
+        return f"<Owner(name={self.name}, email={self.email})>"
