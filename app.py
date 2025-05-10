@@ -27,5 +27,26 @@ class Productions(Resource):
         productions = Production.query.all()
         production_list = [p.to_dict() for p in productions]
         return make_response(jsonify({'productions': production_list}), 200)
+    
 
-api.add_resource(Productions, '/api/productions', endpoint='productions')
+    def post(self):
+        # Get the JSON data from the request
+        data = request.get_json()
+
+        # Create a new Production instance
+        new_production = Production(
+            title=data['title'],
+            genre=data['genre'],
+            budget=data['budget'],
+            imageUrl=data['imageUrl'],
+            director=data['director'],
+            description=data['description']
+        )
+        
+        # Add the new production to the database 
+        db.session.add(new_production)
+        db.session.commit()
+        
+        return make_response(jsonify({'message': 'Production created successfully!'}), 201)
+
+api.add_resource(Productions, '/api/productions')

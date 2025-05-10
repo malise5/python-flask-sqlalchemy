@@ -1,5 +1,3 @@
-from email.mime import image
-from operator import ge
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 
@@ -38,8 +36,8 @@ class CrewMember(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-    #create a serialize rule that will help add our 'production' to the crew_member
-    serialize_rules = ('-production.crew_memberS',)
+    #Avoid circular reference
+    serialize_rules = ('-created_at', '-updated_at', '-production.crew_members')
 
     def __repr__(self):
         return f'<CrewMember Name: {self.name}, Role: {self.role}, Production ID: {self.production_id}>'
