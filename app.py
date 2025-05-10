@@ -48,3 +48,39 @@ class Productions(Resource):
         }), 201)
 
 api.add_resource(Productions, '/api/productions')
+
+class ProductionById(Resource):
+    def get(self, production_id):
+        # Query the database to get a specific Production record by ID
+        production = Production.query.get_or_404(production_id)
+        return make_response(jsonify({'production': production.to_dict()}), 200)
+
+    def put(self, production_id):
+        # Get the JSON data from the request
+        data = request.get_json()
+
+        # Query the database to get the Production record by ID
+        production = Production.query.get_or_404(production_id)
+
+        # Update the production with new data
+        for key, value in data.items():
+            setattr(production, key, value)
+
+        db.session.commit()
+
+        return make_response(jsonify({
+            'message': 'Production updated successfully!',
+            'production': production.to_dict()
+        }), 200)
+
+    def delete(self, production_id):
+        # Query the database to get the Production record by ID
+        production = Production.query.filter_by(id=production_id).first_or_404()
+
+        # Delete the production from the database
+        db.session.delete(production)
+        db.session.commit()
+
+        return make_response(jsonify({'message': 'Production deleted successfully!'}), 200)
+
+api.add_resource(ProductionById, '/api/productions/<int:production_id>')
